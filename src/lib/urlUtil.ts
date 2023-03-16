@@ -6,7 +6,6 @@ export const addSearchParamsByRegx = (url: string, params: Record<string, string
   url = url.replace(regex, `?${queryString}`)
 }
 
-
 export const getHostName = (url: string) => {
   const regex = /^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n]+\.[^:\/\n]+)/g
   const match = regex.exec(url)

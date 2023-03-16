@@ -73,7 +73,8 @@ export default abstract class PostgrestBuilder<Result>
       headers: this.headers,
       body: JSON.stringify(this.body),
       signal: this.signal,
-    }).then(async (res) => {
+    }).then(async (res: any) => {
+      console.log('pg js res-------->' + res)
       let error = null
       let data = null
       let count: number | null = null
@@ -82,7 +83,7 @@ export default abstract class PostgrestBuilder<Result>
 
       if (res.ok) {
         if (this.method !== 'HEAD') {
-          const body = await res.text()
+          const body = res.data
           if (body === '') {
             // Prefer: return=minimal
           } else if (this.headers['Accept'] === 'text/csv') {
@@ -93,7 +94,8 @@ export default abstract class PostgrestBuilder<Result>
           ) {
             data = body
           } else {
-            data = JSON.parse(body)
+            // data = JSON.parse(body)
+            data = body
           }
         }
 
@@ -103,7 +105,7 @@ export default abstract class PostgrestBuilder<Result>
           count = parseInt(contentRange[1])
         }
       } else {
-        const body = await res.text()
+        const body = res.data
 
         try {
           error = JSON.parse(body)
