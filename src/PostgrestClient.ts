@@ -70,7 +70,7 @@ export default class PostgrestClient<
    * @param relation - The table or view name to query
    */
   from(relation: string): PostgrestQueryBuilder<Schema, any> {
-    const url = new URL(`${this.url}/${relation}`)
+    const url = `${this.url}/${relation}`
     return new PostgrestQueryBuilder<Schema, any>(url, {
       headers: { ...this.headers },
       schema: this.schema,

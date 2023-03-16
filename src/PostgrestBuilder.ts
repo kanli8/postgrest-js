@@ -1,6 +1,6 @@
-import crossFetch from 'cross-fetch'
-
 import type { Fetch, PostgrestSingleResponse } from './types'
+
+import { fetch as uniFetch } from './lib/uniFetch'
 
 export default abstract class PostgrestBuilder<Result>
   implements PromiseLike<PostgrestSingleResponse<Result>>
@@ -24,11 +24,11 @@ export default abstract class PostgrestBuilder<Result>
     this.shouldThrowOnError = builder.shouldThrowOnError
     this.signal = builder.signal
     this.allowEmpty = builder.allowEmpty
-
+    // this.fetch = uniFetch as Fetch
     if (builder.fetch) {
       this.fetch = builder.fetch
     } else if (typeof fetch === 'undefined') {
-      this.fetch = crossFetch
+      this.fetch = uniFetch as Fetch
     } else {
       this.fetch = fetch
     }
@@ -67,6 +67,7 @@ export default abstract class PostgrestBuilder<Result>
     // NOTE: Invoke w/o `this` to avoid illegal invocation error.
     // https://github.com/supabase/postgrest-js/pull/247
     const _fetch = this.fetch
+
     let res = _fetch(this.url.toString(), {
       method: this.method,
       headers: this.headers,

@@ -2,19 +2,20 @@ import PostgrestBuilder from './PostgrestBuilder'
 import PostgrestFilterBuilder from './PostgrestFilterBuilder'
 import { GetResult } from './select-query-parser'
 import { Fetch, GenericSchema, GenericTable, GenericView } from './types'
+import { addSearchParamsByRegx } from './lib/urlUtil'
 
 export default class PostgrestQueryBuilder<
   Schema extends GenericSchema,
   Relation extends GenericTable | GenericView
 > {
-  url: URL
+  url: string
   headers: Record<string, string>
   schema?: string
   signal?: AbortSignal
   fetch?: Fetch
 
   constructor(
-    url: URL,
+    url: string,
     {
       headers = {},
       schema,
@@ -77,7 +78,8 @@ export default class PostgrestQueryBuilder<
         return c
       })
       .join('')
-    this.url.searchParams.set('select', cleanedColumns)
+    // this.url.searchParams.set('select', cleanedColumns)
+    addSearchParamsByRegx(this.url, { select: cleanedColumns })
     if (count) {
       this.headers['Prefer'] = `count=${count}`
     }
@@ -138,7 +140,8 @@ export default class PostgrestQueryBuilder<
       const columns = values.reduce((acc, x) => acc.concat(Object.keys(x)), [] as string[])
       if (columns.length > 0) {
         const uniqueColumns = [...new Set(columns)].map((column) => `"${column}"`)
-        this.url.searchParams.set('columns', uniqueColumns.join(','))
+        // this.url.searchParams.set('columns', uniqueColumns.join(','))
+        addSearchParamsByRegx(this.url, { columns: uniqueColumns.join(',') })
       }
     }
 
@@ -202,7 +205,10 @@ export default class PostgrestQueryBuilder<
 
     const prefersHeaders = [`resolution=${ignoreDuplicates ? 'ignore' : 'merge'}-duplicates`]
 
-    if (onConflict !== undefined) this.url.searchParams.set('on_conflict', onConflict)
+    if (onConflict !== undefined) {
+      // this.url.searchParams.set('on_conflict', onConflict)
+      addSearchParamsByRegx(this.url, { on_conflict: onConflict })
+    }
     const body = values
     if (count) {
       prefersHeaders.push(`count=${count}`)
