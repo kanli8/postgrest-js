@@ -79,7 +79,7 @@ export default class PostgrestQueryBuilder<
       })
       .join('')
     // this.url.searchParams.set('select', cleanedColumns)
-    addSearchParamsByRegx(this.url, { select: cleanedColumns })
+    this.url = addSearchParamsByRegx(this.url, { select: cleanedColumns })
     if (count) {
       this.headers['Prefer'] = `count=${count}`
     }
@@ -141,7 +141,7 @@ export default class PostgrestQueryBuilder<
       if (columns.length > 0) {
         const uniqueColumns = [...new Set(columns)].map((column) => `"${column}"`)
         // this.url.searchParams.set('columns', uniqueColumns.join(','))
-        addSearchParamsByRegx(this.url, { columns: uniqueColumns.join(',') })
+        this.url = addSearchParamsByRegx(this.url, { columns: uniqueColumns.join(',') })
       }
     }
 
@@ -207,7 +207,7 @@ export default class PostgrestQueryBuilder<
 
     if (onConflict !== undefined) {
       // this.url.searchParams.set('on_conflict', onConflict)
-      addSearchParamsByRegx(this.url, { on_conflict: onConflict })
+      this.url = addSearchParamsByRegx(this.url, { on_conflict: onConflict })
     }
     const body = values
     if (count) {

@@ -1,6 +1,7 @@
 import PostgrestBuilder from './PostgrestBuilder'
 import { GetResult } from './select-query-parser'
 import { GenericSchema } from './types'
+import { addSearchParamsByRegx, getSearchParamsValueByName } from './lib/urlUtil'
 
 export default class PostgrestTransformBuilder<
   Schema extends GenericSchema,
@@ -33,7 +34,8 @@ export default class PostgrestTransformBuilder<
         return c
       })
       .join('')
-    this.url.searchParams.set('select', cleanedColumns)
+    // this.url.searchParams.set('select', cleanedColumns)
+    this.url = addSearchParamsByRegx(this.url, { select: cleanedColumns })
     if (this.headers['Prefer']) {
       this.headers['Prefer'] += ','
     }
@@ -74,14 +76,22 @@ export default class PostgrestTransformBuilder<
     }: { ascending?: boolean; nullsFirst?: boolean; foreignTable?: string } = {}
   ): this {
     const key = foreignTable ? `${foreignTable}.order` : 'order'
-    const existingOrder = this.url.searchParams.get(key)
+    // const existingOrder = this.url.searchParams.get(key)
+    const existingOrder = getSearchParamsValueByName(this.url, key)
 
-    this.url.searchParams.set(
-      key,
-      `${existingOrder ? `${existingOrder},` : ''}${column}.${ascending ? 'asc' : 'desc'}${
-        nullsFirst === undefined ? '' : nullsFirst ? '.nullsfirst' : '.nullslast'
-      }`
-    )
+    // this.url.searchParams.set(
+    //   key,
+    //   `${existingOrder ? `${existingOrder},` : ''}${column}.${ascending ? 'asc' : 'desc'}${
+    //     nullsFirst === undefined ? '' : nullsFirst ? '.nullsfirst' : '.nullslast'
+    //   }`
+    // )
+
+    let col: Record<string, string> = {}
+    col[key] = `${existingOrder ? `${existingOrder},` : ''}${column}.${ascending ? 'asc' : 'desc'}${
+      nullsFirst === undefined ? '' : nullsFirst ? '.nullsfirst' : '.nullslast'
+    }`
+    this.url = addSearchParamsByRegx(this.url, col)
+
     return this
   }
 
@@ -95,7 +105,10 @@ export default class PostgrestTransformBuilder<
    */
   limit(count: number, { foreignTable }: { foreignTable?: string } = {}): this {
     const key = typeof foreignTable === 'undefined' ? 'limit' : `${foreignTable}.limit`
-    this.url.searchParams.set(key, `${count}`)
+    // this.url.searchParams.set(key, `${count}`)
+    let col: Record<string, string> = {}
+    col[key] = `${count}`
+    this.url = addSearchParamsByRegx(this.url, col)
     return this
   }
 
@@ -111,9 +124,15 @@ export default class PostgrestTransformBuilder<
   range(from: number, to: number, { foreignTable }: { foreignTable?: string } = {}): this {
     const keyOffset = typeof foreignTable === 'undefined' ? 'offset' : `${foreignTable}.offset`
     const keyLimit = typeof foreignTable === 'undefined' ? 'limit' : `${foreignTable}.limit`
-    this.url.searchParams.set(keyOffset, `${from}`)
+    // this.url.searchParams.set(keyOffset, `${from}`)
+    let keyOffsetCol: Record<string, string> = {}
+    keyOffsetCol[keyOffset] = `${from}`
+    this.url = addSearchParamsByRegx(this.url, keyOffsetCol)
     // Range is inclusive, so add 1
-    this.url.searchParams.set(keyLimit, `${to - from + 1}`)
+    // this.url.searchParams.set(keyLimit, `${to - from + 1}`)
+    let keyLimitCol: Record<string, string> = {}
+    keyLimitCol[keyLimit] = `${to - from + 1}`
+    this.url = addSearchParamsByRegx(this.url, keyLimitCol)
     return this
   }
 

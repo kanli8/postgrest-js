@@ -1,5 +1,6 @@
 import PostgrestTransformBuilder from './PostgrestTransformBuilder'
 import { GenericSchema } from './types'
+import { addSearchParamsByRegx } from './lib/urlUtil'
 
 type FilterOperator =
   | 'eq'
@@ -41,7 +42,10 @@ export default class PostgrestFilterBuilder<
    * @param value - The value to filter with
    */
   eq(column: string, value: unknown): this {
-    this.url.searchParams.append(column, `eq.${value}`)
+    // this.url.searchParams.append(column, `eq.${value}`)
+    let col: Record<string, string> = {}
+    col[column] = `eq.${value}`
+    this.url = addSearchParamsByRegx(this.url, col)
     return this
   }
 
@@ -54,7 +58,10 @@ export default class PostgrestFilterBuilder<
    * @param value - The value to filter with
    */
   neq(column: string, value: unknown): this {
-    this.url.searchParams.append(column, `neq.${value}`)
+    // this.url.searchParams.append(column, `neq.${value}`)
+    let col: Record<string, string> = {}
+    col[column] = `neq.${value}`
+    this.url = addSearchParamsByRegx(this.url, col)
     return this
   }
 
@@ -67,7 +74,10 @@ export default class PostgrestFilterBuilder<
    * @param value - The value to filter with
    */
   gt(column: string, value: unknown): this {
-    this.url.searchParams.append(column, `gt.${value}`)
+    // this.url.searchParams.append(column, `gt.${value}`)
+    let col: Record<string, string> = {}
+    col[column] = `gt.${value}`
+    this.url = addSearchParamsByRegx(this.url, col)
     return this
   }
 
@@ -80,7 +90,10 @@ export default class PostgrestFilterBuilder<
    * @param value - The value to filter with
    */
   gte(column: string, value: unknown): this {
-    this.url.searchParams.append(column, `gte.${value}`)
+    // this.url.searchParams.append(column, `gte.${value}`)
+    let col: Record<string, string> = {}
+    col[column] = `gte.${value}`
+    this.url = addSearchParamsByRegx(this.url, col)
     return this
   }
 
@@ -93,7 +106,10 @@ export default class PostgrestFilterBuilder<
    * @param value - The value to filter with
    */
   lt(column: string, value: unknown): this {
-    this.url.searchParams.append(column, `lt.${value}`)
+    // this.url.searchParams.append(column, `lt.${value}`)
+    let col: Record<string, string> = {}
+    col[column] = `lt.${value}`
+    this.url = addSearchParamsByRegx(this.url, col)
     return this
   }
 
@@ -106,7 +122,10 @@ export default class PostgrestFilterBuilder<
    * @param value - The value to filter with
    */
   lte(column: string, value: unknown): this {
-    this.url.searchParams.append(column, `lte.${value}`)
+    // this.url.searchParams.append(column, `lte.${value}`)
+    let col: Record<string, string> = {}
+    col[column] = `lte.${value}`
+    this.url = addSearchParamsByRegx(this.url, col)
     return this
   }
 
@@ -119,7 +138,10 @@ export default class PostgrestFilterBuilder<
    * @param pattern - The pattern to match with
    */
   like(column: string, pattern: string): this {
-    this.url.searchParams.append(column, `like.${pattern}`)
+    // this.url.searchParams.append(column, `like.${pattern}`)
+    let col: Record<string, string> = {}
+    col[column] = `like.${pattern}`
+    this.url = addSearchParamsByRegx(this.url, col)
     return this
   }
 
@@ -132,7 +154,10 @@ export default class PostgrestFilterBuilder<
    * @param pattern - The pattern to match with
    */
   ilike(column: string, pattern: string): this {
-    this.url.searchParams.append(column, `ilike.${pattern}`)
+    // this.url.searchParams.append(column, `ilike.${pattern}`)
+    let col: Record<string, string> = {}
+    col[column] = `ilike.${pattern}`
+    this.url = addSearchParamsByRegx(this.url, col)
     return this
   }
 
@@ -154,7 +179,10 @@ export default class PostgrestFilterBuilder<
    * @param value - The value to filter with
    */
   is(column: string, value: boolean | null): this {
-    this.url.searchParams.append(column, `is.${value}`)
+    // this.url.searchParams.append(column, `is.${value}`)
+    let col: Record<string, string> = {}
+    col[column] = `is.${value}`
+    this.url = addSearchParamsByRegx(this.url, col)
     return this
   }
 
@@ -175,7 +203,10 @@ export default class PostgrestFilterBuilder<
         else return `${s}`
       })
       .join(',')
-    this.url.searchParams.append(column, `in.(${cleanedValues})`)
+    // this.url.searchParams.append(column, `in.(${cleanedValues})`)
+    let col: Record<string, string> = {}
+    col[column] = `in.(${cleanedValues})`
+    this.url = addSearchParamsByRegx(this.url, col)
     return this
   }
 
@@ -195,13 +226,22 @@ export default class PostgrestFilterBuilder<
     if (typeof value === 'string') {
       // range types can be inclusive '[', ']' or exclusive '(', ')' so just
       // keep it simple and accept a string
-      this.url.searchParams.append(column, `cs.${value}`)
+      // this.url.searchParams.append(column, `cs.${value}`)
+      let col: Record<string, string> = {}
+      col[column] = `cs.${value}`
+      this.url = addSearchParamsByRegx(this.url, col)
     } else if (Array.isArray(value)) {
       // array
-      this.url.searchParams.append(column, `cs.{${value.join(',')}}`)
+      // this.url.searchParams.append(column, `cs.{${value.join(',')}}`)
+      let col: Record<string, string> = {}
+      col[column] = `cs.{${value.join(',')}}`
+      this.url = addSearchParamsByRegx(this.url, col)
     } else {
       // json
-      this.url.searchParams.append(column, `cs.${JSON.stringify(value)}`)
+      // this.url.searchParams.append(column, `cs.${JSON.stringify(value)}`)
+      let col: Record<string, string> = {}
+      col[column] = `cs.${JSON.stringify(value)}`
+      this.url = addSearchParamsByRegx(this.url, col)
     }
     return this
   }
@@ -221,13 +261,22 @@ export default class PostgrestFilterBuilder<
   containedBy(column: string, value: string | unknown[] | Record<string, unknown>): this {
     if (typeof value === 'string') {
       // range
-      this.url.searchParams.append(column, `cd.${value}`)
+      // this.url.searchParams.append(column, `cd.${value}`)
+      let col: Record<string, string> = {}
+      col[column] = `cd.${value}`
+      this.url = addSearchParamsByRegx(this.url, col)
     } else if (Array.isArray(value)) {
       // array
-      this.url.searchParams.append(column, `cd.{${value.join(',')}}`)
+      // this.url.searchParams.append(column, `cd.{${value.join(',')}}`)
+      let col: Record<string, string> = {}
+      col[column] = `cd.{${value.join(',')}}`
+      this.url = addSearchParamsByRegx(this.url, col)
     } else {
       // json
-      this.url.searchParams.append(column, `cd.${JSON.stringify(value)}`)
+      // this.url.searchParams.append(column, `cd.${JSON.stringify(value)}`)
+      let col: Record<string, string> = {}
+      col[column] = `cd.${JSON.stringify(value)}`
+      this.url = addSearchParamsByRegx(this.url, col)
     }
     return this
   }
@@ -242,7 +291,10 @@ export default class PostgrestFilterBuilder<
    * @param range - The range to filter with
    */
   rangeGt(column: string, range: string): this {
-    this.url.searchParams.append(column, `sr.${range}`)
+    // this.url.searchParams.append(column, `sr.${range}`)
+    let col: Record<string, string> = {}
+    col[column] = `sr.${range}`
+    this.url = addSearchParamsByRegx(this.url, col)
     return this
   }
 
@@ -257,7 +309,10 @@ export default class PostgrestFilterBuilder<
    * @param range - The range to filter with
    */
   rangeGte(column: string, range: string): this {
-    this.url.searchParams.append(column, `nxl.${range}`)
+    // this.url.searchParams.append(column, `nxl.${range}`)
+    let col: Record<string, string> = {}
+    col[column] = `nxl.${range}`
+    this.url = addSearchParamsByRegx(this.url, col)
     return this
   }
 
@@ -271,7 +326,10 @@ export default class PostgrestFilterBuilder<
    * @param range - The range to filter with
    */
   rangeLt(column: string, range: string): this {
-    this.url.searchParams.append(column, `sl.${range}`)
+    // this.url.searchParams.append(column, `sl.${range}`)
+    let col: Record<string, string> = {}
+    col[column] = `sl.${range}`
+    this.url = addSearchParamsByRegx(this.url, col)
     return this
   }
 
@@ -286,7 +344,10 @@ export default class PostgrestFilterBuilder<
    * @param range - The range to filter with
    */
   rangeLte(column: string, range: string): this {
-    this.url.searchParams.append(column, `nxr.${range}`)
+    // this.url.searchParams.append(column, `nxr.${range}`)
+    let col: Record<string, string> = {}
+    col[column] = `nxr.${range}`
+    this.url = addSearchParamsByRegx(this.url, col)
     return this
   }
 
@@ -301,7 +362,10 @@ export default class PostgrestFilterBuilder<
    * @param range - The range to filter with
    */
   rangeAdjacent(column: string, range: string): this {
-    this.url.searchParams.append(column, `adj.${range}`)
+    // this.url.searchParams.append(column, `adj.${range}`)
+    let col: Record<string, string> = {}
+    col[column] = `adj.${range}`
+    this.url = addSearchParamsByRegx(this.url, col)
     return this
   }
 
@@ -320,10 +384,16 @@ export default class PostgrestFilterBuilder<
   overlaps(column: string, value: string | unknown[]): this {
     if (typeof value === 'string') {
       // range
-      this.url.searchParams.append(column, `ov.${value}`)
+      // this.url.searchParams.append(column, `ov.${value}`)
+      let col: Record<string, string> = {}
+      col[column] = `ov.${value}`
+      this.url = addSearchParamsByRegx(this.url, col)
     } else {
       // array
-      this.url.searchParams.append(column, `ov.{${value.join(',')}}`)
+      // this.url.searchParams.append(column, `ov.{${value.join(',')}}`)
+      let col: Record<string, string> = {}
+      col[column] = `ov.{${value.join(',')}}`
+      this.url = addSearchParamsByRegx(this.url, col)
     }
     return this
   }
@@ -362,7 +432,10 @@ export default class PostgrestFilterBuilder<
       typePart = 'w'
     }
     const configPart = config === undefined ? '' : `(${config})`
-    this.url.searchParams.append(column, `${typePart}fts${configPart}.${query}`)
+    // this.url.searchParams.append(column, `${typePart}fts${configPart}.${query}`)
+    let col: Record<string, string> = {}
+    col[column] = `${typePart}fts${configPart}.${query}`
+    this.url = addSearchParamsByRegx(this.url, col)
     return this
   }
 
@@ -377,7 +450,10 @@ export default class PostgrestFilterBuilder<
    */
   match(query: Record<string, unknown>): this {
     Object.entries(query).forEach(([column, value]) => {
-      this.url.searchParams.append(column, `eq.${value}`)
+      // this.url.searchParams.append(column, `eq.${value}`)
+      let col: Record<string, string> = {}
+      col[column] = `eq.${value}`
+      this.url = addSearchParamsByRegx(this.url, col)
     })
     return this
   }
@@ -402,7 +478,10 @@ export default class PostgrestFilterBuilder<
    * @param value - The value to filter with, following PostgREST syntax
    */
   not(column: string, operator: string, value: unknown): this {
-    this.url.searchParams.append(column, `not.${operator}.${value}`)
+    // this.url.searchParams.append(column, `not.${operator}.${value}`)
+    let col: Record<string, string> = {}
+    col[column] = `not.${operator}.${value}`
+    this.url = addSearchParamsByRegx(this.url, col)
     return this
   }
 
@@ -421,7 +500,10 @@ export default class PostgrestFilterBuilder<
    */
   or(filters: string, { foreignTable }: { foreignTable?: string } = {}): this {
     const key = foreignTable ? `${foreignTable}.or` : 'or'
-    this.url.searchParams.append(key, `(${filters})`)
+    // this.url.searchParams.append(key, `(${filters})`)
+    let col: Record<string, string> = {}
+    col[key] = `(${filters})`
+    this.url = addSearchParamsByRegx(this.url, col)
     return this
   }
 
@@ -445,7 +527,10 @@ export default class PostgrestFilterBuilder<
    * @param value - The value to filter with, following PostgREST syntax
    */
   filter(column: string, operator: string, value: unknown): this {
-    this.url.searchParams.append(column, `${operator}.${value}`)
+    // this.url.searchParams.append(column, `${operator}.${value}`)
+    let col: Record<string, string> = {}
+    col[column] = `${operator}.${value}`
+    this.url = addSearchParamsByRegx(this.url, col)
     return this
   }
 }

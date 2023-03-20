@@ -6,7 +6,7 @@ export default abstract class PostgrestBuilder<Result>
   implements PromiseLike<PostgrestSingleResponse<Result>>
 {
   protected method: 'GET' | 'HEAD' | 'POST' | 'PATCH' | 'DELETE'
-  protected url: URL
+  protected url: string
   protected headers: Record<string, string>
   protected schema?: string
   protected body?: unknown
@@ -74,14 +74,16 @@ export default abstract class PostgrestBuilder<Result>
       body: JSON.stringify(this.body),
       signal: this.signal,
     }).then(async (res: any) => {
-      console.log('pg js res-------->' + res)
+      // console.log('pg js res-------->' + res)
+
       let error = null
       let data = null
       let count: number | null = null
-      let status = res.status
+      // let status = res.status
+      let status = res.statusCode
       let statusText = res.statusText
 
-      if (res.ok) {
+      if (res.statusCode == 200 || res.statusCode == 201 || res.statusCode == 204) {
         if (this.method !== 'HEAD') {
           const body = res.data
           if (body === '') {
@@ -97,10 +99,15 @@ export default abstract class PostgrestBuilder<Result>
             // data = JSON.parse(body)
             data = body
           }
+          statusText = 'OK'
+        }
+        
+        if (res.statusCode === 204) {
+          statusText = 'No Content'
         }
 
         const countHeader = this.headers['Prefer']?.match(/count=(exact|planned|estimated)/)
-        const contentRange = res.headers.get('content-range')?.split('/')
+        const contentRange = res.header['Content-Range']?.split('/')
         if (countHeader && contentRange && contentRange.length > 1) {
           count = parseInt(contentRange[1])
         }
@@ -111,7 +118,7 @@ export default abstract class PostgrestBuilder<Result>
           error = JSON.parse(body)
 
           // Workaround for https://github.com/supabase/postgrest-js/issues/295
-          if (Array.isArray(error) && res.status === 404) {
+          if (Array.isArray(error) && res.statusCode === 404) {
             data = []
             error = null
             status = 200
@@ -119,13 +126,11 @@ export default abstract class PostgrestBuilder<Result>
           }
         } catch {
           // Workaround for https://github.com/supabase/postgrest-js/issues/295
-          if (res.status === 404 && body === '') {
+          if (res.statusCode === 404 && body === '') {
             status = 204
             statusText = 'No Content'
           } else {
-            error = {
-              message: body,
-            }
+            error = body
           }
         }
 

@@ -3,6 +3,7 @@ import PostgrestFilterBuilder from './PostgrestFilterBuilder'
 import PostgrestBuilder from './PostgrestBuilder'
 import { DEFAULT_HEADERS } from './constants'
 import { Fetch, GenericSchema } from './types'
+import { addSearchParamsByRegx } from './lib/urlUtil'
 
 /**
  * PostgREST client.
@@ -122,12 +123,16 @@ export default class PostgrestClient<
     Function_['Returns']
   > {
     let method: 'HEAD' | 'POST'
-    const url = new URL(`${this.url}/rpc/${fn}`)
+    // const url = new URL(`${this.url}/rpc/${fn}`)
+    var url = `${this.url}/rpc/${fn}`
     let body: unknown | undefined
     if (head) {
       method = 'HEAD'
       Object.entries(args).forEach(([name, value]) => {
-        url.searchParams.append(name, `${value}`)
+        // url.searchParams.append(name, `${value}`)
+        let col: Record<string, string> = {}
+        col[name] = `${value}`
+        url = addSearchParamsByRegx(url, col)
       })
     } else {
       method = 'POST'
