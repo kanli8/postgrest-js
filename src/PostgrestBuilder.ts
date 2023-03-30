@@ -101,7 +101,7 @@ export default abstract class PostgrestBuilder<Result>
           }
           statusText = 'OK'
         }
-        
+
         if (res.statusCode === 204) {
           statusText = 'No Content'
         }
