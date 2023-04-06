@@ -1,5 +1,8 @@
 export const addSearchParamsByRegx = (url: string, params: Record<string, string>) => {
   // console.log('addSearchParamsByRegx-------> url = ', url)
+  if (Object.keys(params).length === 0) {
+    return url
+  }
   const queryString = Object.keys(params)
     .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
     .join('&')
