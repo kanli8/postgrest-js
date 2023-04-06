@@ -1,3 +1,4 @@
+import { fetch } from './lib/uniFetch'
 export type Fetch = typeof fetch
 
 /**
