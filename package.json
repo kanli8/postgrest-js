@@ -1,6 +1,6 @@
 {
   "name": "@kanli8_supabase/postgrest-js",
-  "version": "1.4.1-01",
+  "version": "1.4.1-2",
   "description": "Isomorphic PostgREST client",
   "keywords": [
     "postgrest",
