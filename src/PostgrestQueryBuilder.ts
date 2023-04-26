@@ -242,7 +242,7 @@ export default class PostgrestQueryBuilder<
       if (columns.length > 0) {
         const uniqueColumns = [...new Set(columns)].map((column) => `"${column}"`)
         // this.url.searchParams.set('columns', uniqueColumns.join(','))
-        this.url= addSearchParamsByRegx(this.url, { columns: uniqueColumns.join(',') })
+        this.url = addSearchParamsByRegx(this.url, { columns: uniqueColumns.join(',') })
       }
     }
 

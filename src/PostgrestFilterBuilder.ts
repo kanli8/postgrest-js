@@ -154,7 +154,10 @@ export default class PostgrestFilterBuilder<
    * @param patterns - The patterns to match with
    */
   likeAllOf(column: string, patterns: string[]): this {
-    this.url.searchParams.append(column, `like(all).{${patterns.join(',')}}`)
+    // this.url.searchParams.append(column, `like(all).{${patterns.join(',')}}`)
+    let col: Record<string, string> = {}
+    col[column] = `like(all).{${patterns.join(',')}}`
+    this.url = addSearchParamsByRegx(this.url, col)
     return this
   }
 
@@ -167,7 +170,10 @@ export default class PostgrestFilterBuilder<
    * @param patterns - The patterns to match with
    */
   likeAnyOf(column: string, patterns: string[]): this {
-    this.url.searchParams.append(column, `like(any).{${patterns.join(',')}}`)
+    // this.url.searchParams.append(column, `like(any).{${patterns.join(',')}}`)
+    let col: Record<string, string> = {}
+    col[column] = `like(any).{${patterns.join(',')}}`
+    this.url = addSearchParamsByRegx(this.url, col)
     return this
   }
 
@@ -196,7 +202,10 @@ export default class PostgrestFilterBuilder<
    * @param patterns - The patterns to match with
    */
   ilikeAllOf(column: string, patterns: string[]): this {
-    this.url.searchParams.append(column, `ilike(all).{${patterns.join(',')}}`)
+    // this.url.searchParams.append(column, `ilike(all).{${patterns.join(',')}}`)
+    let col: Record<string, string> = {}
+    col[column] = `ilike(all).{${patterns.join(',')}}`
+    this.url = addSearchParamsByRegx(this.url, col)
     return this
   }
 
@@ -209,7 +218,10 @@ export default class PostgrestFilterBuilder<
    * @param patterns - The patterns to match with
    */
   ilikeAnyOf(column: string, patterns: string[]): this {
-    this.url.searchParams.append(column, `ilike(any).{${patterns.join(',')}}`)
+    // this.url.searchParams.append(column, `ilike(any).{${patterns.join(',')}}`)
+    let col: Record<string, string> = {}
+    col[column] = `ilike(any).{${patterns.join(',')}}`
+    this.url = addSearchParamsByRegx(this.url, col)
     return this
   }
 
