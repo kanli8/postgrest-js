@@ -83,7 +83,7 @@ export default abstract class PostgrestBuilder<Result>
       let status = res.statusCode
       let statusText = res.statusText
 
-      if (res.statusCode == 200 || res.statusCode == 201 || res.statusCode == 204) {
+      if (res.statusCode >= 200 && res.statusCode < 300) {
         if (this.method !== 'HEAD') {
           const body = res.data
           if (body === '') {
